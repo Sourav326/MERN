@@ -2,12 +2,20 @@
 const Product = require("../models/product");
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncError = require("../middleware/catchAsyncError");
+const ApiFeatures = require("../utils/apiFeatures");
 
 
 //Get all product list
 //instead of using try catch for async we created the middleware for async with name catchAsyncError to make our code shorter
 exports.getAllProducts = catchAsyncError(async (req, res) => {
-    const products = await Product.find();
+    
+    const apiFeatures = new ApiFeatures(Product.find(),req.query)
+    .search()
+    .filter();//for searching the product, class under utils
+    
+    // const products = await Product.find();
+    const products = await apiFeatures.query;
+
     res.status(200).json({
         success:true,
         products
